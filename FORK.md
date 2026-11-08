@@ -6,69 +6,45 @@ terminal app is MIT-licensed; this fork keeps it and adds a local web UI.
 
 It is not affiliated with, sponsored by, or endorsed by the original author.
 
-## Chosen publishing plan: private now, public fork later
+## Published
 
-The private repository is live and the first commit is pushed:
+The public fork is live:
 
-- Repository: `https://github.com/IvanBurenin/yoinks-web-mod` (private)
-- Branch: `main`
-- `origin`: `git@github.com:IvanBurenin/yoinks-web-mod.git` (SSH)
-- `upstream`: `https://github.com/pablostanley/yoinks.git`
-- Author: `vanombus <bureninivan792@gmail.com>`
+- **Public fork:** https://github.com/IvanBurenin/yoinks-web-mod (fork of `pablostanley/yoinks`)
+- **Private backup:** https://github.com/IvanBurenin/yoinks-web-mod-private
+- **Branches:** both `main` branches point at the same upstream-based history
+- **Author:** `vanombus <140816814+IvanBurenin@users.noreply.github.com>`
+- `origin` = private backup (SSH)
+- `public` = public fork (SSH)
+- `upstream` = original project
+- The old ZIP-root history is kept locally as `main-root-backup` and is not pushed.
 
-No public fork has been created yet.
+### Daily workflow
 
-### Fork-ready history
-
-The private `main` branch was created from a ZIP snapshot, so it has no shared
-history with upstream. A separate `public-main` branch is prepared locally for
-the future public fork: its parent is `upstream/main`, and its tree is this
-fork. Push that branch — not the private `main` — to the fork:
+Make changes on `main`, then update both repositories:
 
 ```sh
-git remote add public https://github.com/IvanBurenin/yoinks.git
-git push public public-main:main
+git push public main    # public fork
+git push origin main    # private backup
 ```
 
-If you want the public fork to keep the `yoinks-web-mod` name, rename the
-private repository to `yoinks-web-mod-private` first, then fork and rename the
-fork to `yoinks-web-mod`. The package metadata already points there.
+### Sync with upstream
 
-1. The Git identity is already set for this repository:
+```sh
+git fetch upstream
+git merge upstream/main
+git push public main
+git push origin main
+```
 
-   ```sh
-   git config user.name "vanombus"
-   git config user.email "bureninivan792@gmail.com"
-   ```
+If you need to change the author of the latest commit, use:
 
-2. When the project is ready to be public, you have two options:
+```sh
+git commit --amend --reset-author
+```
 
-   **A. Make this repository public** (simplest, no fork badge):
-
-   GitHub → repository → Settings → Danger Zone → Change visibility → Make public.
-
-   **B. Create a public fork** (gets the "forked from" badge) and push the same
-   branch to it. GitHub will name the fork `yoinks` by default; rename it to
-   `yoinks-web-mod` only if you first rename or delete this private repository,
-   otherwise the names collide.
-
-   ```sh
-   git remote add public https://github.com/IvanBurenin/yoinks.git
-   git push -u public main
-   ```
-
-   If the public fork ends up under a different name, update the `repository`,
-   `homepage` and `bugs` fields in `package.json` and the clone URL in
-   `README.md` before announcing it. The private `origin` can stay as a backup
-   or be removed.
-
-3. If you later change your public name or email, amend the commit before
-   pushing publicly:
-
-   ```sh
-   git add README.md LICENSE package.json
-   git commit --amend --reset-author
-   ```
+and force-push both remotes. For older commits, prefer `git filter-repo` or ask
+for help before rewriting public history.
 
 ## What changed
 
@@ -107,28 +83,20 @@ Everything else is inherited from upstream.
 6. Optionally add a short demo screenshot/GIF of the web UI to the README.
    Crop browser tabs and personal paths first.
 
-## Creating the public fork (not done yet)
+## Public fork
 
-The code is already committed and pushed to the private repository. When you
-are ready, use GitHub's **Fork** button on
-[pablostanley/yoinks](https://github.com/pablostanley/yoinks). You do not need
-to copy the files again — just add the fork as a second remote and push:
+The fork is live at
+https://github.com/IvanBurenin/yoinks-web-mod. It is a true GitHub fork of
+`pablostanley/yoinks`, the default branch is `main`, and upstream history is
+preserved. The private backup is
+https://github.com/IvanBurenin/yoinks-web-mod-private.
+
+Push changes with:
 
 ```sh
-git remote add public https://github.com/IvanBurenin/yoinks.git
-git push public public-main:main
+git push public main
+git push origin main
 ```
-
-Use `public-main`, not the private `main`: it is based on `upstream/main` and
-therefore fast-forwards cleanly into the fork, while keeping the "forked from"
-badge. GitHub will name the fork `yoinks` by default. If you want it under a
-different name, rename it in repository settings (or rename the private
-repository first if the name collides), then update `package.json` and
-`README.md`.
-
-This preserves upstream history and makes syncing easy. If you instead make the
-private repository public, it will be a standalone project without the
-"forked from" badge.
 
 ## Syncing with upstream
 
