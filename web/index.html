@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="description" content="yoink any video. paste. yoink. done." />
+    <title>yoinks — paste. yoink. done.</title>
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" type="image/svg+xml" href="/assets/logo-light.svg" />
+    <link rel="apple-touch-icon" href="/assets/icon-192.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="stylesheet" href="/styles.css" />
+    <script>
+      // set the palette before first paint to avoid a flash
+      try {
+        const mode = localStorage.getItem('yoinks-theme')
+        const dark = mode === 'dark' || (mode !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches)
+        document.documentElement.dataset.theme = dark ? 'dark' : 'light'
+      } catch {}
+    </script>
+  </head>
+  <body>
+    <header class="topbar">
+      <button class="logo-btn" id="homeBtn" type="button" title="back to start" aria-label="yoinks home">
+        <img class="logo logo-light" src="/assets/logo-light.svg" alt="yoinks" width="240" height="60" />
+        <img class="logo logo-dark" src="/assets/logo-dark.svg" alt="yoinks" width="240" height="60" />
+      </button>
+
+      <nav class="tabs" aria-label="sections">
+        <button class="tab active" type="button" data-tab="yoink">yoink</button>
+        <button class="tab" type="button" data-tab="queue">queue <span class="count hidden" id="queueCount">0</span></button>
+        <button class="tab" type="button" data-tab="library">library</button>
+        <button class="tab" type="button" data-tab="settings">settings</button>
+      </nav>
+
+      <div class="top-actions">
+        <button class="theme-btn hidden" id="installBtn" type="button">install</button>
+        <button class="theme-btn" id="themeBtn" type="button" title="cycle theme">
+          <span class="theme-dot" aria-hidden="true"></span>
+          <span id="themeLabel">auto</span>
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <!-- ------------------------------------------------------- yoink -->
+      <section class="panel active" id="panel-yoink">
+        <div class="screen active" id="screen-home">
+          <p class="eyebrow">no shady ads. no fake buttons.</p>
+          <h1 class="tagline">paste. yoink. done.</h1>
+          <p class="sub">Any video from YouTube, X, Instagram, Threads, TikTok &amp; 1,800+ other sites — straight to your Downloads folder.</p>
+
+          <form class="url-form" id="urlForm" novalidate>
+            <input
+              id="urlInput"
+              type="text"
+              inputmode="url"
+              autocomplete="off"
+              autocapitalize="off"
+              spellcheck="false"
+              placeholder="https://youtu.be/dQw4w9WgXcQ"
+              aria-label="video link"
+            />
+            <label class="playlist-toggle" title="load the whole playlist/channel">
+              <input type="checkbox" id="playlistToggle" /> playlist
+            </label>
+            <button class="paste-btn" id="pasteBtn" type="button" title="paste from clipboard">paste</button>
+            <button class="yoink-btn" type="submit">yoink <span aria-hidden="true">↓</span></button>
+          </form>
+
+          <p class="hint" id="homeHint">press enter · esc to clear</p>
+
+          <details class="batch" id="batchBox">
+            <summary>queue multiple links</summary>
+            <textarea id="batchInput" rows="4" spellcheck="false" placeholder="one link per line&#10;https://youtu.be/…&#10;https://www.tiktok.com/…"></textarea>
+            <div class="row">
+              <select id="batchMode" aria-label="batch format">
+                <option value="video">video · best H.264</option>
+                <option value="audio">audio · mp3</option>
+              </select>
+              <button class="yoink-btn small" id="batchAdd" type="button">add to queue</button>
+            </div>
+          </details>
+        </div>
+
+        <div class="screen" id="screen-loading" aria-live="polite">
+          <div class="spinner" aria-hidden="true"><span></span></div>
+          <p class="loading-text" id="loadingText">reading the link…</p>
+          <button class="link-btn" id="cancelProbe" type="button">cancel</button>
+        </div>
+
+        <div class="screen" id="screen-pick">
+          <article class="video-card">
+            <div class="thumb-wrap">
+              <img id="thumb" alt="" referrerpolicy="no-referrer" loading="lazy" />
+            </div>
+            <div class="video-meta">
+              <h2 id="videoTitle"></h2>
+              <p class="uploader" id="videoUploader"></p>
+              <div class="badges">
+                <span class="badge" id="badgeDuration"></span>
+                <span class="badge" id="badgeSite"></span>
+                <span class="badge badge-quiet">ready to yoink</span>
+              </div>
+            </div>
+          </article>
+
+          <p class="section-label">after download</p>
+          <div class="options" id="downloadOptions">
+            <label class="check"><input type="checkbox" id="optSubtitles" /> subtitles</label>
+            <label class="check"><input type="checkbox" id="optThumbnail" /> thumbnail</label>
+            <label class="check"><input type="checkbox" id="optMetadata" /> metadata</label>
+            <label class="check"><input type="checkbox" id="optChapters" /> chapters</label>
+          </div>
+
+          <p class="section-label">pick a format</p>
+          <p class="section-note" id="pickNote">H.264 plays everywhere. H.265/AV1/VP9 are converted to H.264 after download (videos up to 1080p).</p>
+          <div class="choices" id="choices"></div>
+
+          <button class="link-btn back" id="backBtn" type="button">← another link</button>
+        </div>
+
+        <div class="screen" id="screen-playlist">
+          <article class="video-card">
+            <div class="video-meta">
+              <h2 id="playlistTitle"></h2>
+              <p class="uploader" id="playlistMeta"></p>
+              <div class="badges"><span class="badge" id="playlistCount">0 entries</span></div>
+            </div>
+          </article>
+
+          <div class="row playlist-toolbar">
+            <label class="check"><input type="checkbox" id="playlistAll" /> select all</label>
+            <select id="playlistMode" aria-label="playlist format">
+              <option value="video">video · best H.264</option>
+              <option value="audio">audio · mp3</option>
+            </select>
+            <button class="yoink-btn small" id="playlistQueue" type="button">add selected to queue</button>
+          </div>
+
+          <div class="playlist-list" id="playlistEntries"></div>
+          <button class="link-btn back" id="playlistBack" type="button">← another link</button>
+        </div>
+
+        <div class="screen" id="screen-download" aria-live="polite">
+          <p class="eyebrow" id="downloadEyebrow">queued</p>
+          <h2 class="download-title" id="downloadTitle">…</h2>
+          <p class="sub" id="downloadChoice"></p>
+
+          <div class="progress-shell"><div class="progress-bar" id="progressBar"></div></div>
+          <div class="progress-meta">
+            <span class="pct" id="progressPct">0%</span>
+            <span id="progressBytes"></span>
+            <span id="progressSpeed"></span>
+            <span id="progressEta"></span>
+          </div>
+
+          <p class="status-line" id="downloadStatus">starting…</p>
+
+          <div class="actions">
+            <button class="link-btn" id="backToStartBtn" type="button">← back to start</button>
+            <button class="yoink-btn hidden" id="openFolderBtn" type="button">open folder</button>
+            <button class="link-btn hidden" id="viewLibraryBtn" type="button">view in library</button>
+            <button class="link-btn" id="againBtn" type="button">yoink another</button>
+            <button class="link-btn" id="cancelJobBtn" type="button">cancel</button>
+          </div>
+        </div>
+
+        <div class="screen" id="screen-error">
+          <div class="error-mark" aria-hidden="true">!</div>
+          <h2 class="download-title">that didn’t yoink</h2>
+          <p class="sub" id="errorText"></p>
+          <div class="actions">
+            <button class="yoink-btn" id="errorBack" type="button">try again</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ------------------------------------------------------- queue -->
+      <section class="panel" id="panel-queue">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow">downloads</p>
+            <h1 class="panel-title">queue</h1>
+          </div>
+          <div class="panel-actions">
+            <span class="muted mono" id="queueMeta"></span>
+            <button class="link-btn" id="clearFinished" type="button">clear finished</button>
+          </div>
+        </div>
+        <div class="job-list" id="jobList"></div>
+        <div class="empty hidden" id="queueEmpty">
+          <p>Nothing in the queue yet.</p>
+          <button class="link-btn" id="queueAddBtn" type="button">← add a link</button>
+        </div>
+      </section>
+
+      <!-- ------------------------------------------------------- library -->
+      <section class="panel" id="panel-library">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow">everything you kept</p>
+            <h1 class="panel-title">library</h1>
+          </div>
+          <input class="search-input" id="librarySearch" type="search" placeholder="search title, uploader, format…" autocomplete="off" />
+        </div>
+        <div class="library-list" id="libraryList"></div>
+        <div class="empty hidden" id="libraryEmpty">
+          <p>Nothing saved yet.</p>
+          <button class="link-btn" id="libraryAddBtn" type="button">← yoink something</button>
+        </div>
+      </section>
+
+      <!-- ------------------------------------------------------- settings -->
+      <section class="panel" id="panel-settings">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow">make it yours</p>
+            <h1 class="panel-title">settings</h1>
+          </div>
+        </div>
+
+        <form class="settings-card" id="settingsForm">
+          <label class="field">
+            <span>output folder</span>
+            <input id="setOutDir" type="text" spellcheck="false" />
+          </label>
+
+          <div class="field-row">
+            <label class="field">
+              <span>parallel downloads</span>
+              <select id="setConcurrency">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>cookies from browser</span>
+              <select id="setCookies">
+                <option value="">off</option>
+                <option value="chrome">Chrome</option>
+                <option value="edge">Edge</option>
+                <option value="firefox">Firefox</option>
+                <option value="brave">Brave</option>
+                <option value="chromium">Chromium</option>
+                <option value="opera">Opera</option>
+                <option value="safari">Safari</option>
+                <option value="vivaldi">Vivaldi</option>
+              </select>
+            </label>
+          </div>
+
+          <label class="check"><input type="checkbox" id="setTranscode" /> convert H.265/AV1/VP9 to H.264 after download</label>
+          <label class="check"><input type="checkbox" id="setNotify" /> desktop notifications when a download finishes</label>
+
+          <label class="field">
+            <span>webhook URL <span class="muted">(optional)</span></span>
+            <input id="setWebhook" type="url" spellcheck="false" placeholder="https://example.com/hook" />
+          </label>
+
+          <div class="row">
+            <button class="yoink-btn" type="submit">save settings</button>
+            <span class="muted mono" id="settingsSaved"></span>
+          </div>
+        </form>
+
+        <div class="diag-card" id="diagCard">
+          <div class="diag-head">
+            <div>
+              <p class="eyebrow">under the hood</p>
+              <h2 class="panel-subtitle">diagnostics</h2>
+            </div>
+            <button class="link-btn" id="updateYtdlp" type="button">update yt-dlp</button>
+          </div>
+          <div class="diag-grid" id="diagGrid"></div>
+          <div class="lan-card" id="lanCard"></div>
+        </div>
+
+        <p class="hint pwa-hint" id="pwaHint">Install this page as an app from your browser menu for a standalone window.</p>
+      </section>
+    </main>
+
+    <footer>
+      <span>personal archiving tool — only download what you have the right to keep.</span>
+      <span class="footer-sep">·</span>
+      <a href="https://github.com/pablostanley/yoinks" target="_blank" rel="noopener">github</a>
+    </footer>
+
+    <div class="toasts" id="toasts" aria-live="polite"></div>
+
+    <div class="modal hidden" id="modal">
+      <div class="modal-backdrop" data-close="1"></div>
+      <div class="modal-body">
+        <button class="modal-close" id="modalClose" type="button" aria-label="close">×</button>
+        <h3 id="modalTitle"></h3>
+        <div id="modalMedia"></div>
+      </div>
+    </div>
+
+    <script src="/app.js" type="module"></script>
+  </body>
+</html>

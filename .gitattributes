@@ -1,0 +1,18 @@
+# Keep line endings normalised across Windows/macOS/Linux without corrupting binaries.
+* text=auto
+*.ts text
+*.tsx text
+*.js text
+*.json text
+*.md text
+*.svg text
+*.css text
+*.html text
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.mp4 binary
+*.mp3 binary

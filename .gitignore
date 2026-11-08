@@ -3,3 +3,12 @@ dist/
 *.log
 .DS_Store
 .claude/
+
+# local fork additions
+*.part
+cookies.txt
+.env
+.env.*
+!.env.example
+.yoinks/
+web-state.json
