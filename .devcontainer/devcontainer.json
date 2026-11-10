@@ -1,0 +1,12 @@
+{
+  "name": "yoinks-web-mod",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:22",
+  "postCreateCommand": "npm install",
+  "forwardPorts": [4321],
+  "portsAttributes": {
+    "4321": {
+      "label": "yoinks web",
+      "onAutoForward": "openPreview"
+    }
+  }
+}

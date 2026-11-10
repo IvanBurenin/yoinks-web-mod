@@ -18,6 +18,7 @@
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
+    "quick": "node scripts/quick-start.mjs",
     "web": "tsx src/server.ts",
     "web:dev": "tsx watch src/server.ts",
     "web:start": "node dist/server.js",
