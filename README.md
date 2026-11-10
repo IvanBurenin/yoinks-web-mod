@@ -63,6 +63,10 @@ npm run quick
 opens **http://127.0.0.1:4321**. Use `npm run quick -- --no-open` to keep the
 browser closed.
 
+On Windows you can also double-click **`start-yoinks.cmd`** — it installs
+dependencies, starts the server and opens the browser. If you make a desktop
+shortcut, use `assets/yoinks.ico` as its icon.
+
 Requires Node 18+.
 
 ### GitHub Codespaces
