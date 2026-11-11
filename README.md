@@ -6,6 +6,8 @@
 >
 > Fork maintained by [vanombus](https://github.com/IvanBurenin).
 >
+> **Website:** https://ivanburenin.github.io/yoinks-web-mod/
+>
 > See [FORK.md](FORK.md) for the fork checklist, upstream sync commands and issue-routing notes.
 
 <picture>
