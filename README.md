@@ -232,11 +232,11 @@ keep, and be excellent to creators.
 
 ## License
 
-[MIT](LICENSE).
+See [LICENSE](LICENSE) for the full license text and copyright notices.
 
 - Original code: Copyright (c) 2026 Pablo Stanley.
 - Fork modifications: Copyright (c) 2026 vanombus.
 
-The MIT license covers the source code. The original name and logo are not
+The license covers the source code. The original name and logo are not
 covered by a trademark grant; this fork is unofficial and is not affiliated
 with or endorsed by the original author.

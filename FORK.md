@@ -2,7 +2,8 @@
 
 This repository is an **unofficial fork** of
 [pablostanley/yoinks](https://github.com/pablostanley/yoinks). The original
-terminal app is MIT-licensed; this fork keeps it and adds a local web UI.
+terminal app is open source (see `LICENSE`); this fork keeps it and adds a
+local web UI.
 
 It is not affiliated with, sponsored by, or endorsed by the original author.
 
@@ -70,9 +71,9 @@ Everything else is inherited from upstream.
    - it shadows the upstream CLI if both are installed.
    - `yoinks-web` is always safe.
 4. If you plan to distribute this fork widely, consider renaming it and
-   replacing `assets/logo-*.svg`. MIT does not grant trademark rights to the
-   original name or logo. For a personal fork, an "unofficial fork" disclaimer
-   is usually enough.
+   replacing `assets/logo-*.svg`. The license does not grant trademark rights to
+   the original name or logo. For a personal fork, an "unofficial fork"
+   disclaimer is usually enough.
 5. Do **not** commit:
    - `node_modules/`, `dist/`, logs
    - downloaded media, `*.part` files
@@ -116,7 +117,7 @@ Likely conflict points: `README.md`, `package.json`, `src/lib/ytdlp.ts`,
 
 - Original code: Copyright (c) 2026 Pablo Stanley.
 - Fork modifications: Copyright (c) 2026 vanombus.
-- License: MIT. Keep the full text in `LICENSE` and the copyright notice in
+- Keep the full license text in `LICENSE` and the copyright notice in
   source/package distributions.
 - The original README, screenshots and logo remain the work of the original
   author; keep the links and attribution.
