@@ -11,21 +11,20 @@ It is not affiliated with, sponsored by, or endorsed by the original author.
 The public fork is live:
 
 - **Public fork:** https://github.com/IvanBurenin/yoinks-web-mod (fork of `pablostanley/yoinks`)
-- **Private backup:** https://github.com/IvanBurenin/yoinks-web-mod-private
-- **Branches:** both `main` branches point at the same upstream-based history
+- **Website:** https://ivanburenin.github.io/yoinks-web-mod/
 - **Author:** `vanombus <140816814+IvanBurenin@users.noreply.github.com>`
-- `origin` = private backup (SSH)
 - `public` = public fork (SSH)
 - `upstream` = original project
 - The old ZIP-root history is kept locally as `main-root-backup` and is not pushed.
+- The temporary private backup was removed. To add one later, create a private
+  repository and push `main` to it with a new remote (e.g. `backup`).
 
 ### Daily workflow
 
-Make changes on `main`, then update both repositories:
+Make changes on `main`, then update the public fork:
 
 ```sh
-git push public main    # public fork
-git push origin main    # private backup
+git push public main
 ```
 
 ### Sync with upstream
@@ -34,7 +33,6 @@ git push origin main    # private backup
 git fetch upstream
 git merge upstream/main
 git push public main
-git push origin main
 ```
 
 If you need to change the author of the latest commit, use:
@@ -43,8 +41,8 @@ If you need to change the author of the latest commit, use:
 git commit --amend --reset-author
 ```
 
-and force-push both remotes. For older commits, prefer `git filter-repo` or ask
-for help before rewriting public history.
+and force-push the public remote. For older commits, prefer `git filter-repo`
+or ask for help before rewriting public history.
 
 ## What changed
 
@@ -86,16 +84,15 @@ Everything else is inherited from upstream.
 ## Public fork
 
 The fork is live at
-https://github.com/IvanBurenin/yoinks-web-mod. It is a true GitHub fork of
+https://github.com/IvanBurenin/yoinks-web-mod with the landing page at
+https://ivanburenin.github.io/yoinks-web-mod/. It is a true GitHub fork of
 `pablostanley/yoinks`, the default branch is `main`, and upstream history is
-preserved. The private backup is
-https://github.com/IvanBurenin/yoinks-web-mod-private.
+preserved.
 
 Push changes with:
 
 ```sh
 git push public main
-git push origin main
 ```
 
 ## Syncing with upstream
